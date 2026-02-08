@@ -22,6 +22,15 @@ async def on_startup() -> None:
     await classes.init()
     await checklists.init()
     await schedule.init()
+from app.config import load_settings
+from app.db import certificates, popcorn
+from app.handlers.start import router as start_router
+from app.logging_conf import setup_logging
+
+
+async def on_startup() -> None:
+    await certificates.init()
+    await popcorn.init()
 
 
 async def main() -> None:
@@ -40,6 +49,12 @@ async def main() -> None:
     dp.include_router(schedule_router)
 
     asyncio.create_task(run_background_jobs(bot, ctx))
+    settings = load_settings()
+    await on_startup()
+
+    bot = Bot(token=settings.bot_token)
+    dp = Dispatcher()
+    dp.include_router(start_router)
 
     logging.info("Bot started")
     await dp.start_polling(bot)

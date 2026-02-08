@@ -1,4 +1,5 @@
 from aiogram import F, Router
+from aiogram import Router
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
@@ -57,3 +58,7 @@ async def set_role(message: Message) -> None:
         return
     await users.set_role(int(parts[1]), role, now_iso())
     await message.answer("Роль обновлена")
+    await message.answer(
+        "Выберите раздел. Для MVP реализованы базовые структуры и расчёт расхода попкорна.",
+        reply_markup=kb.as_markup(resize_keyboard=True),
+    )

@@ -13,6 +13,9 @@ async def init() -> None:
             owner_name TEXT,
             status TEXT NOT NULL DEFAULT 'active',
             created_at TEXT NOT NULL,
+            owner_name TEXT,
+            amount INTEGER NOT NULL,
+            issued_at TEXT NOT NULL,
             redeemed_at TEXT
         )
         """
@@ -35,6 +38,10 @@ async def find_by_code_part(code_part: str) -> list[dict[str, Any]]:
     conn = await connect("certificates.db")
     cur = await conn.execute(
         "SELECT code, amount, owner_name, status, created_at, redeemed_at FROM certificates WHERE code LIKE ? ORDER BY created_at DESC LIMIT 10",
+async def find_by_code_part(code_part: str) -> list[dict[str, Any]]:
+    conn = await connect("certificates.db")
+    cur = await conn.execute(
+        "SELECT code, owner_name, amount, issued_at, redeemed_at FROM certificates WHERE code LIKE ? ORDER BY code LIMIT 10",
         (f"%{code_part}%",),
     )
     rows = [dict(r) for r in await cur.fetchall()]
