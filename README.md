@@ -1,1 +1,107 @@
 # workCheckList
+
+Telegram-бот на **aiogram 3** для кинотеатра с раздельными БД по функциональным модулям.
+
+## Реализовано по ТЗ
+
+- Отдельные БД:
+  - `users.db` — роли пользователей.
+  - `certificates.db` — сертификаты (выдача по шагам, причина выдачи, поиск/фильтрация, погашение с деталями сеанса).
+  - `popcorn.db` — отчёты расхода попкорна, сверка с кассой, хранение фото, отчёты за период.
+  - `classes.db` — учёт классов с телефоном, рейтингами, доп. полями и фото.
+  - `checklists.db` — шаблоны чек-листов, шаги, отметки выполнения, фото шагов, напоминания.
+  - `schedule.db` — график смен на месяц.
+
+- Сертификаты:
+  - Пошаговая выдача администратором/системным администратором: получатель, 2/4 билета, причина выдачи (быстрые кнопки).
+  - Автогенерация уникального числового кода сертификата.
+  - Поиск по части кода и через QR (фото с подписью `cert_qr`).
+  - Фильтрация по причине и диапазону дат выдачи.
+  - Погашение с фиксацией данных посещения: сеанс, ряд, места.
+
+- Попкорн:
+  - Расчёт для 1.5/3.0/6.0 литров по формулам ТЗ.
+  - Сверка факта с ожидаемыми продажами.
+  - Обязательное подтверждение фото (этап команды + фото).
+  - Хранение и выборка отчётов за период (`/popcorn_report 7|14|28`).
+  - Автоочистка записей старше `CLEANUP_DAYS` (по умолчанию 45).
+
+- Рейтинг классов:
+  - Запись по телефону формата `7XXXXXXXXXX`.
+  - Учёт билетов, рейтинга чистоты/поведения, школы/района/сеанса/рядов/доп. информации.
+  - Прикрепление фото-подтверждения.
+
+- Чек-листы:
+  - Админ создаёт шаблоны и шаги.
+  - Сотрудник запускает чек-лист и отмечает шаги.
+  - Фото на конкретный шаг (`check_photo RUN_STEP_ID`).
+  - Напоминания по дате и дню недели.
+
+- График:
+  - Админ создаёт смены.
+  - Просмотр графика за месяц.
+
+- Безопасность и эксплуатация:
+  - Параметризованные SQL-запросы.
+  - Логирование в файл и stdout.
+  - Роли `system_admin/admin/worker`.
+  - Имена медиафайлов: `YYYYMMDD_HHMMSS_<code>.ext`.
+
+## Основные команды
+
+- Общие:
+  - `/start`
+  - `/add_admin USER_ID` (только system admin)
+  - `/set_role USER_ID worker|admin`
+
+- Сертификаты:
+  - `/cert_issue`
+  - `/cert_find PART`
+  - `/cert_filter reason=<причина> date_from=YYYY-MM-DD date_to=YYYY-MM-DD`
+  - `/cert_redeem CODE SESSION ROW SEATS`
+  - Фото QR: отправить фото с подписью `cert_qr`
+
+- Попкорн:
+  - `/popcorn SIZE WAREHOUSE_MORNING SLEEVES_TAKEN SOLD_CASHIER TZ_LEFT [YESTERDAY_END]`
+  - Фото отчёта: отправить фото с подписью `popcorn_photo`
+  - `/popcorn_report 7` (или 14/28)
+
+- Классы:
+  - `/class_add PHONE TICKETS CLEANLINESS BEHAVIOR SCHOOL|DISTRICT|SESSION|ROWS|INFO`
+  - Фото: отправить фото с подписью `class_photo`
+  - `/class_save` (если без фото)
+  - `/class_find PHONE_PART`
+
+- Чек-листы:
+  - `/check_template TITLE`
+  - `/check_step TEMPLATE_ID TEXT`
+  - `/check_list`
+  - `/check_start TEMPLATE_ID`
+  - `/check_view RUN_ID`
+  - `/check_done RUN_STEP_ID`
+  - Фото шага: подпись `check_photo RUN_STEP_ID`
+  - `/reminder_add WORKER_ID TITLE|weekday:0-6`
+  - `/reminder_add WORKER_ID TITLE|date:YYYY-MM-DD`
+
+- График:
+  - `/shift_add YYYY-MM-DD WORKER_NAME SHIFT_TIME [NOTES]`
+  - `/shift_month YYYY-MM`
+
+## Быстрый старт
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+python -m app.main
+```
+
+`.env`:
+
+```env
+BOT_TOKEN=...
+SYSTEM_ADMIN_ID=123456789
+ADMIN_IDS=111,222
+CLEANUP_DAYS=45
+```
