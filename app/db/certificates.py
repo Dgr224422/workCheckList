@@ -3,6 +3,7 @@ from __future__ import annotations
 import random
 from typing import Any
 
+from typing import Any
 from app.db.base import connect
 
 
@@ -26,6 +27,17 @@ async def init() -> None:
         """
     )
     await _ensure_columns(conn)
+            amount INTEGER NOT NULL,
+            owner_name TEXT,
+            status TEXT NOT NULL DEFAULT 'active',
+            created_at TEXT NOT NULL,
+            owner_name TEXT,
+            amount INTEGER NOT NULL,
+            issued_at TEXT NOT NULL,
+            redeemed_at TEXT
+        )
+        """
+    )
     await conn.commit()
     await conn.close()
 
@@ -76,6 +88,11 @@ async def add_certificate(
         VALUES(?, ?, ?, ?, ?)
         """,
         (code, tickets_count, owner_name, issue_reason, created_at),
+async def add_certificate(code: str, amount: int, owner_name: str | None, created_at: str) -> None:
+    conn = await connect("certificates.db")
+    await conn.execute(
+        "INSERT INTO certificates(code, amount, owner_name, created_at) VALUES(?, ?, ?, ?)",
+        (code, amount, owner_name, created_at),
     )
     await conn.commit()
     await conn.close()
@@ -92,6 +109,11 @@ async def find_by_code_part(code_part: str) -> list[dict[str, Any]]:
         ORDER BY created_at DESC
         LIMIT 20
         """,
+        "SELECT code, amount, owner_name, status, created_at, redeemed_at FROM certificates WHERE code LIKE ? ORDER BY created_at DESC LIMIT 10",
+async def find_by_code_part(code_part: str) -> list[dict[str, Any]]:
+    conn = await connect("certificates.db")
+    cur = await conn.execute(
+        "SELECT code, owner_name, amount, issued_at, redeemed_at FROM certificates WHERE code LIKE ? ORDER BY code LIMIT 10",
         (f"%{code_part}%",),
     )
     rows = [dict(r) for r in await cur.fetchall()]
@@ -108,6 +130,7 @@ async def get_by_code(code: str) -> dict[str, Any] | None:
         FROM certificates
         WHERE code = ?
         """,
+        "SELECT code, amount, owner_name, status, created_at, redeemed_at FROM certificates WHERE code = ?",
         (code,),
     )
     row = await cur.fetchone()
@@ -124,6 +147,11 @@ async def redeem(code: str, redeemed_at: str, session: str, row: str, seats: str
         WHERE code=? AND status='active'
         """,
         (redeemed_at, session, row, seats, code),
+async def redeem(code: str, redeemed_at: str) -> bool:
+    conn = await connect("certificates.db")
+    cur = await conn.execute(
+        "UPDATE certificates SET status='redeemed', redeemed_at=? WHERE code=? AND status='active'",
+        (redeemed_at, code),
     )
     await conn.commit()
     changed = cur.rowcount > 0

@@ -4,6 +4,9 @@ import shlex
 from aiogram import F, Router
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
+from aiogram import F, Router
+from aiogram.types import Message
+
 from app.config import AppContext
 from app.db import certificates
 from app.services.auth import ensure_min_role
@@ -37,6 +40,15 @@ async def certificates_menu(message: Message) -> None:
 
 @router.message(F.text == "/cert_issue")
 async def cert_issue_start(message: Message) -> None:
+        "• /cert_add CODE AMOUNT OWNER (admin)\n"
+        "• /cert_find PART\n"
+        "• Отправьте фото QR с подписью cert_qr\n"
+        "• /cert_redeem CODE (admin)"
+    )
+
+
+@router.message(F.text.startswith("/cert_add "))
+async def cert_add(message: Message) -> None:
     ctx: AppContext = message.bot["ctx"]
     if not await ensure_min_role(message.from_user.id, "admin", ctx):
         await message.answer("Недостаточно прав.")
@@ -121,6 +133,19 @@ async def _finalize_issue(message: Message, user_id: int) -> None:
         f"Причина: {state['issue_reason']}\n"
         f"Получатель: {state['owner_name']}"
     )
+    parts = message.text.split(maxsplit=3)
+    if len(parts) < 3:
+        await message.answer("Формат: /cert_add CODE AMOUNT OWNER")
+        return
+
+    code = parts[1].strip()
+    if len(code) < 4:
+        await message.answer("Код слишком короткий")
+        return
+    amount = int(parts[2])
+    owner_name = parts[3].strip() if len(parts) > 3 else None
+    await certificates.add_certificate(code=code, amount=amount, owner_name=owner_name, created_at=now_iso())
+    await message.answer(f"Сертификат {code} добавлен")
 
 
 @router.message(F.text.startswith("/cert_find "))
@@ -135,6 +160,10 @@ async def cert_find(message: Message) -> None:
     for row in rows:
         lines.append(
             f"{row['code']} | билетов={row['tickets_count']} | {row['status']} | {row['issue_reason']} | выдан: {row['created_at']}"
+    lines = []
+    for row in rows:
+        lines.append(
+            f"{row['code']} | {row['amount']}₽ | {row['status']} | {row.get('owner_name') or '-'}"
         )
     await message.answer("\n".join(lines))
 
@@ -187,6 +216,15 @@ async def cert_redeem(message: Message) -> None:
     seats = parts[4].strip()
 
     changed = await certificates.redeem(code, now_iso(), session, row, seats)
+@router.message(F.text.startswith("/cert_redeem "))
+async def cert_redeem(message: Message) -> None:
+    ctx: AppContext = message.bot["ctx"]
+    if not await ensure_min_role(message.from_user.id, "admin", ctx):
+        await message.answer("Недостаточно прав.")
+        return
+
+    code = message.text.removeprefix("/cert_redeem ").strip()
+    changed = await certificates.redeem(code, now_iso())
     await message.answer("Погашено" if changed else "Не найден активный сертификат")
 
 
@@ -213,4 +251,5 @@ async def cert_qr_photo(message: Message) -> None:
     await message.answer(
         f"Найден: {row['code']} | билетов={row['tickets_count']} | {row['status']} | "
         f"причина: {row['issue_reason']} | выдан: {row['created_at']}"
+        f"Найден: {row['code']} | {row['amount']}₽ | {row['status']} | владелец: {row.get('owner_name') or '-'}"
     )

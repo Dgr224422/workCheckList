@@ -55,3 +55,14 @@ def load_context() -> AppContext:
         ),
         admin_ids=admin_ids,
     )
+
+
+
+def load_settings() -> Settings:
+    token = os.getenv("BOT_TOKEN", "")
+    admin_id = int(os.getenv("SYSTEM_ADMIN_ID", "0"))
+    if not token:
+        raise RuntimeError("BOT_TOKEN is required")
+    if admin_id <= 0:
+        raise RuntimeError("SYSTEM_ADMIN_ID must be a positive integer")
+    return Settings(bot_token=token, system_admin_id=admin_id)
