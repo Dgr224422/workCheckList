@@ -57,7 +57,7 @@ Telegram-бот на **aiogram 3** для кинотеатра с раздель
 - Сертификаты:
   - `/cert_issue`
   - `/cert_find PART`
-  - `/cert_filter reason=<причина> date_from=YYYY-MM-DD date_to=YYYY-MM-DD`
+  - `/cert_filter reason="Технический сбой" date_from=YYYY-MM-DD date_to=YYYY-MM-DD`
   - `/cert_redeem CODE SESSION ROW SEATS`
   - Фото QR: отправить фото с подписью `cert_qr`
 

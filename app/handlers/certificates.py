@@ -1,4 +1,5 @@
 import logging
+import shlex
 
 from aiogram import F, Router
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
@@ -28,7 +29,7 @@ async def certificates_menu(message: Message) -> None:
         "Сертификаты:\n"
         "• /cert_issue — пошаговая выдача сертификата (admin)\n"
         "• /cert_find PART\n"
-        "• /cert_filter reason=<причина> date_from=YYYY-MM-DD date_to=YYYY-MM-DD\n"
+        "• /cert_filter reason=\"Технический сбой\" date_from=YYYY-MM-DD date_to=YYYY-MM-DD\n"
         "• Отправьте фото QR с подписью cert_qr\n"
         "• /cert_redeem CODE SESSION ROW SEATS"
     )
@@ -140,9 +141,15 @@ async def cert_find(message: Message) -> None:
 
 @router.message(F.text.startswith("/cert_filter "))
 async def cert_filter(message: Message) -> None:
-    raw = message.text.removeprefix("/cert_filter ").strip().split()
+    query = message.text.removeprefix("/cert_filter ").strip()
+    try:
+        tokens = shlex.split(query)
+    except ValueError:
+        await message.answer('Неверный формат. Пример: /cert_filter reason=\"Технический сбой\" date_from=2026-01-01 date_to=2026-01-31')
+        return
+
     params: dict[str, str] = {}
-    for token in raw:
+    for token in tokens:
         if "=" not in token:
             continue
         k, v = token.split("=", maxsplit=1)
