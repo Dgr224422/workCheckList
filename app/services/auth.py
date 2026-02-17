@@ -1,7 +1,7 @@
 from app.config import AppContext
 from app.db import users
 
-ROLES_ORDER = {"worker": 1, "admin": 2, "system_admin": 3}
+ROLES_ORDER = {"guest": 0, "worker": 1, "admin": 2, "system_admin": 3}
 
 
 async def get_role(user_id: int, ctx: AppContext) -> str:
@@ -12,7 +12,7 @@ async def get_role(user_id: int, ctx: AppContext) -> str:
         return role
     if user_id in ctx.admin_ids:
         return "admin"
-    return "worker"
+    return "guest"
 
 
 async def ensure_min_role(user_id: int, required: str, ctx: AppContext) -> bool:

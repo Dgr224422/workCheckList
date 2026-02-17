@@ -4,5 +4,7 @@ __pycache__/
 .env
 logs/
 data/
+app/logs/
+app/data/
 
 media/
