@@ -1,0 +1,43 @@
+BTN_CERT = "🎟 Сертификаты"
+BTN_POPCORN = "🍿 Попкорн"
+BTN_CLASSES = "🏫 Рейтинг классов"
+BTN_CHECKLISTS = "✅ Чек-листы"
+BTN_SCHEDULE = "📅 График"
+BTN_FAQ = "❓ FAQ"
+BTN_MAIN_MENU = "🏠 Главное меню"
+BTN_BACK = "⬅ Назад"
+BTN_CANCEL = "Отмена"
+
+CERT_ISSUE = "📤 Выдать из наличия"
+CERT_CREATE_STOCK = "➕ Создать заготовки"
+CERT_FIND = "🔎 Поиск по коду"
+CERT_FILTER = "🎯 Фильтр"
+CERT_REDEEM = "✅ Погасить сертификат"
+CERT_QR = "📷 QR-поиск"
+CERT_STATS = "📊 Статистика"
+
+POPCORN_NEW = "🧾 Новый отчет"
+POPCORN_REPORT = "📊 Отчет за период"
+POPCORN_PHOTOS = "🖼 Фото попкорна"
+POPCORN_SUPPLY = "📦 Поставка ведер"
+POPCORN_STOCK = "🏪 Остаток на складе"
+
+CLASSES_ADD = "➕ Добавить запись"
+CLASSES_FIND = "🔎 Поиск"
+
+CHECKLISTS_TEMPLATES = "📋 Шаблоны"
+CHECKLISTS_START = "▶ Запустить чек-лист"
+CHECKLISTS_MARK = "✅ Отметить шаг"
+CHECKLISTS_REMINDER = "⏰ Напоминания"
+CHECKLISTS_CREATE = "➕ Создать шаблон"
+CHECKLISTS_ADD_STEP = "➕ Добавить шаг"
+CHECKLISTS_PHOTOS = "🖼 Фото чек-листов"
+
+SCHEDULE_ADD = "➕ Добавить смену"
+SCHEDULE_VIEW = "📅 Посмотреть месяц"
+
+ROLE_MENU = "⚙️ Роли"
+
+FAQ_VIEW = "📖 Читать"
+FAQ_ADD_ARTICLE = "➕ Новая статья"
+FAQ_ADD_STEP = "➕ Добавить шаг"
