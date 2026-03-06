@@ -1,5 +1,5 @@
 from aiogram import F, Router
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import Message
@@ -15,6 +15,7 @@ from app.ui.labels import (
     BTN_CHECKLISTS,
     BTN_CLASSES,
     BTN_FAQ,
+    BTN_POSTERS,
     BTN_MAIN_MENU,
     BTN_POPCORN,
     BTN_SCHEDULE,
@@ -38,9 +39,10 @@ def _main_menu_kb(is_admin: bool, is_system_admin: bool) -> ReplyKeyboardBuilder
     kb.button(text=BTN_CHECKLISTS)
     kb.button(text=BTN_SCHEDULE)
     kb.button(text=BTN_FAQ)
+    kb.button(text=BTN_POSTERS)
     if is_system_admin:
         kb.button(text=ROLE_MENU)
-    kb.adjust(2, 2, 2, 1)
+    kb.adjust(2, 2, 2, 1, 1)
     return kb
 
 
@@ -79,7 +81,7 @@ async def cmd_start(message: Message, state: FSMContext) -> None:
     await _send_main_menu(message, ctx)
 
 
-@router.message(F.text.in_({BTN_MAIN_MENU, BTN_BACK}))
+@router.message(StateFilter(None), F.text.in_({BTN_MAIN_MENU, BTN_BACK, BTN_CANCEL}))
 async def to_main_menu(message: Message, state: FSMContext) -> None:
     await state.clear()
     ctx: AppContext = message.bot.ctx

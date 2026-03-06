@@ -72,7 +72,8 @@ def _popcorn_menu_kb() -> ReplyKeyboardBuilder:
     kb.button(text=POPCORN_SUPPLY)
     kb.button(text=POPCORN_STOCK)
     kb.button(text=BTN_BACK)
-    kb.adjust(2, 2, 1)
+    kb.button(text=BTN_CANCEL)
+    kb.adjust(2, 2, 2)
     return kb
 
 

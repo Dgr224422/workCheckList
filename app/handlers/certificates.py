@@ -82,7 +82,8 @@ def _cert_menu_kb(is_admin: bool) -> ReplyKeyboardBuilder:
     kb.button(text=CERT_FILTER)
     kb.button(text=CERT_QR)
     kb.button(text=BTN_BACK)
-    kb.adjust(2, 2, 2)
+    kb.button(text=BTN_CANCEL)
+    kb.adjust(2, 2, 2, 2)
     return kb
 
 

@@ -46,7 +46,8 @@ def _faq_menu_kb(is_admin: bool) -> ReplyKeyboardBuilder:
         kb.button(text=FAQ_ADD_ARTICLE)
         kb.button(text=FAQ_ADD_STEP)
     kb.button(text=BTN_BACK)
-    kb.adjust(2, 1, 1)
+    kb.button(text=BTN_CANCEL)
+    kb.adjust(2, 2, 1)
     return kb
 
 

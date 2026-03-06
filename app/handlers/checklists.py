@@ -61,7 +61,8 @@ def _checklists_menu_kb(is_admin: bool) -> ReplyKeyboardBuilder:
         kb.button(text=CHECKLISTS_ADD_STEP)
         kb.button(text=CHECKLISTS_PHOTOS)
     kb.button(text=BTN_BACK)
-    kb.adjust(2, 2, 2, 1)
+    kb.button(text=BTN_CANCEL)
+    kb.adjust(2, 2, 2, 2)
     return kb
 
 

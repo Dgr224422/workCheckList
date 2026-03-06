@@ -35,3 +35,13 @@ async def get_role(user_id: int) -> Optional[str]:
     row = await cur.fetchone()
     await conn.close()
     return row["role"] if row else None
+
+
+async def list_non_guest_user_ids() -> list[int]:
+    conn = await connect("users.db")
+    cur = await conn.execute(
+        "SELECT user_id FROM users WHERE role != 'guest'",
+    )
+    rows = await cur.fetchall()
+    await conn.close()
+    return [int(r["user_id"]) for r in rows]

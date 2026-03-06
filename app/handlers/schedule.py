@@ -36,7 +36,8 @@ def _schedule_menu_kb(is_admin: bool) -> ReplyKeyboardBuilder:
     if is_admin:
         kb.button(text=SCHEDULE_ADD)
     kb.button(text=BTN_BACK)
-    kb.adjust(2, 1)
+    kb.button(text=BTN_CANCEL)
+    kb.adjust(2, 2)
     return kb
 
 

@@ -1,4 +1,4 @@
-from app.db import certificates, popcorn, classes, checklists, schedule, users, faq
+from app.db import certificates, popcorn, classes, checklists, schedule, users, faq, posters
 
 __all__ = [
     "certificates",
@@ -8,4 +8,5 @@ __all__ = [
     "schedule",
     "users",
     "faq",
+    "posters",
 ]

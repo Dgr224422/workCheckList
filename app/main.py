@@ -10,7 +10,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from app.config import load_context
-from app.db import certificates, popcorn, classes, checklists, schedule, users, faq
+from app.db import certificates, popcorn, classes, checklists, schedule, users, faq, posters
 from app.handlers.start import router as start_router
 from app.handlers.certificates import router as cert_router
 from app.handlers.popcorn import router as popcorn_router
@@ -18,6 +18,7 @@ from app.handlers.classes import router as classes_router
 from app.handlers.checklists import router as checklists_router
 from app.handlers.schedule import router as schedule_router
 from app.handlers.faq import router as faq_router
+from app.handlers.posters import router as posters_router
 from app.logging_conf import setup_logging
 from app.services.scheduler import run_background_jobs
 
@@ -30,6 +31,7 @@ async def on_startup() -> None:
     await checklists.init()
     await schedule.init()
     await faq.init()
+    await posters.init()
 
 
 async def main() -> None:
@@ -47,6 +49,7 @@ async def main() -> None:
     dp.include_router(checklists_router)
     dp.include_router(schedule_router)
     dp.include_router(faq_router)
+    dp.include_router(posters_router)
 
     asyncio.create_task(run_background_jobs(bot, ctx))
 

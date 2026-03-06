@@ -1,0 +1,26 @@
+[Unit]
+Description=workCheckList Telegram Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__BOT_USER__
+Group=__BOT_USER__
+WorkingDirectory=__BOT_WORKDIR__
+EnvironmentFile=__BOT_WORKDIR__/.env
+ExecStart=/bin/bash __BOT_WORKDIR__/scripts/run_bot.sh
+Restart=always
+RestartSec=5
+TimeoutStartSec=30
+TimeoutStopSec=20
+KillSignal=SIGINT
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=__BOT_WORKDIR__
+
+[Install]
+WantedBy=multi-user.target

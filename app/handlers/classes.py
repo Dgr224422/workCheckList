@@ -41,7 +41,8 @@ def _classes_menu_kb() -> ReplyKeyboardBuilder:
     kb.button(text=CLASSES_ADD)
     kb.button(text=CLASSES_FIND)
     kb.button(text=BTN_BACK)
-    kb.adjust(2, 1)
+    kb.button(text=BTN_CANCEL)
+    kb.adjust(2, 2)
     return kb
 
 
