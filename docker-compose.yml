@@ -1,0 +1,26 @@
+services:
+  bot:
+    build: .
+    container_name: workchecklist-bot
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      TZ: Europe/Moscow
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./media:/app/media
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
+volumes:
+  portainer_data:

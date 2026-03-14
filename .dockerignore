@@ -1,0 +1,13 @@
+.git
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+data
+logs
+media
+backup_before_cleanup_20260306_201758
+*.db
+*.db-wal
+*.db-shm
